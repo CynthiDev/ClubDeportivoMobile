@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/border_color"
+            android:src="@drawable/header"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="3"
+                android:src="@drawable/ejemplocliente"/>
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:textColor="#FEFEFE"
+                android:text="Nombre Apellido"
+                android:textStyle="bold"
+                android:background="#6A56FF"
+                android:textSize="24dp"/>
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:textColor="#FEFEFE"
+                android:background="#6A56FF"
+                android:text="ID - Tipo de Cliente\nDNI:99.999.999\nTeléfono: 2239999999\nCorreo: nombre@gmail.com"
+                android:textSize="18dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="vertical">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="20dp"
+                android:backgroundTint="#3C8A36"
+                android:text="Imprimir apto médico"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="20dp"
+                android:text="Editar Datos Socio"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_margin="20dp"
+                android:backgroundTint="#E91E1E"
+                android:text="Borrar Datos Socio"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="#EDE246">
+
+        <ImageButton
+            android:id="@+id/btnInicio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:src="@drawable/iconoinicio" />
+        <ImageButton
+            android:id="@+id/btnListas"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:src="@drawable/iconolistas" />
+        <ImageButton
+            android:id="@+id/btnAgregar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:src="@drawable/iconoagregar" />
+        <ImageButton
+            android:id="@+id/btnAbonar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:src="@drawable/iconoabonar" />
+        <ImageButton
+            android:id="@+id/btnSalir"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:src="@drawable/iconosalir" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/border_color"
+            android:src="@drawable/header"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCliente1"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_margin="20dp"
+
+                android:layout_weight="1"
+                android:text="Cliente 1 - Datos del cliente" />
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+
+                android:text="Cliente 2 - Datos del cliente"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+
+                android:text="Cliente 3 - Datos del cliente" />
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+
+                android:text="Cliente 4 - Datos del cliente"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="#EDE246">
+
+        <ImageButton
+            android:id="@+id/btnInicio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:scaleType="centerInside"
+            android:src="@drawable/iconoinicio" />
+
+        <ImageButton
+            android:id="@+id/btnListas"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:scaleType="centerInside"
+            android:src="@drawable/iconolistas" />
+
+        <ImageButton
+            android:id="@+id/btnAgregar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:scaleType="centerInside"
+            android:src="@drawable/iconoagregar" />
+
+        <ImageButton
+            android:id="@+id/btnAbonar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:scaleType="centerInside"
+            android:src="@drawable/iconoabonar" />
+
+        <ImageButton
+            android:id="@+id/btnSalir"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#EDE246"
+            android:scaleType="centerInside"
+            android:src="@drawable/iconosalir" />
+
+    </LinearLayout>
+</RelativeLayout>

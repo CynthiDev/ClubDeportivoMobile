@@ -1,0 +1,63 @@
+package com.example.clubdeportivo
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageButton
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+
+class ListsActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_lists)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        val btnIngreso: ImageButton = findViewById(R.id.btnInicio)
+        btnIngreso.setOnClickListener {
+            val intent = Intent(this,StartActivity::class.java)
+            startActivity(intent)
+        }
+        val btnListas: ImageButton = findViewById(R.id.btnListas)
+        btnListas.setOnClickListener {
+            val intent = Intent(this,ListsActivity::class.java)
+            startActivity(intent)
+        }
+        val btnAbonar: ImageButton = findViewById(R.id.btnAbonar)
+        btnAbonar.setOnClickListener {
+            val intent = Intent(this,PaymentActivity::class.java)
+            startActivity(intent)
+        }
+        val btnAgregar: ImageButton = findViewById(R.id.btnAgregar)
+        btnAgregar.setOnClickListener {
+            val intent = Intent(this,AddActivity::class.java)
+            startActivity(intent)
+        }
+        val btnSalir: ImageButton = findViewById(R.id.btnSalir)
+        btnSalir.setOnClickListener { finishAffinity() }
+
+        val btnClientes: ImageButton = findViewById(R.id.btnClientes)
+        btnClientes.setOnClickListener {
+            val intent = Intent(this,ClientsActivity::class.java)
+            startActivity(intent)
+        }
+
+        val btnProfesores: ImageButton = findViewById(R.id.btnProfesores)
+        btnProfesores.setOnClickListener {
+            val intent = Intent(this,TeachersActivity::class.java)
+            startActivity(intent)
+        }
+
+        val btnActividades: ImageButton = findViewById(R.id.btnActividades)
+        btnActividades.setOnClickListener {
+            val intent = Intent(this,ActivitiesActivity::class.java)
+            startActivity(intent)
+        }
+    }
+}
