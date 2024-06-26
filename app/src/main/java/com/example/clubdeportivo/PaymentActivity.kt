@@ -42,8 +42,14 @@ class PaymentActivity : AppCompatActivity() {
         val btnSalir: ImageButton = findViewById(R.id.btnSalir)
         btnSalir.setOnClickListener { finishAffinity() }
 
-        val btnPagar: Button = findViewById(R.id.btnPagar)
-        btnPagar.setOnClickListener {
+        val btnPagarSocio: Button = findViewById(R.id.btnPagarSocio)
+        btnPagarSocio.setOnClickListener {
+            val intent = Intent(this,PayMethodActivity::class.java)
+            startActivity(intent)
+        }
+
+        val btnPagarNoSocio: Button = findViewById(R.id.btnPagarNoSocio)
+        btnPagarNoSocio.setOnClickListener {
             val intent = Intent(this,PayMethodActivity::class.java)
             startActivity(intent)
         }

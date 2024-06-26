@@ -31,6 +31,7 @@
             android:orientation="horizontal">
             <Button
                 android:layout_width="0dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Perfil"
@@ -38,6 +39,7 @@
                 android:textColor="@color/black"/>
             <Button
                 android:layout_width="0dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Certificado"
@@ -50,15 +52,18 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_margin="20dp"
-            android:background="#FEFEFE"
+            android:background="@drawable/rounded_edittext"
+            android:padding="20dp"
             android:text="Nombre"/>
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_margin="20dp"
-            android:background="#FEFEFE"
+            android:background="@drawable/rounded_edittext"
+            android:padding="20dp"
             android:text="Apellido"/>
         <EditText
             android:layout_width="match_parent"
@@ -66,31 +71,54 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_margin="20dp"
-            android:background="#FEFEFE"
+            android:background="@drawable/rounded_edittext"
+            android:padding="20dp"
             android:text="DNI"/>
-        <EditText
+
+        <RadioGroup
+            android:id="@+id/esSocio"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:background="#FEFEFE"
-            android:text="Teléfono"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:background="#FEFEFE"
-            android:text="Correo electrónico"/>
+            android:orientation="horizontal"
+            android:gravity="center">
+
+
+            <RadioButton
+                android:id="@+id/socio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Socio"/>
+
+            <RadioButton
+                android:id="@+id/nosocio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="No Socio" />
+
+        </RadioGroup>
+        <!--HARDCODEAR-->
+        <!--SPINNER DE ACTIVIDAD SI SELECCIONA NO SOCIO-->
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:background="#FEFEFE"
-            android:layout_margin="20dp"/>
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="20dp"/>
+        <!--SPINNER DE METODO PAGO SOCIO Y NO SOCIO-->
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="20dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
