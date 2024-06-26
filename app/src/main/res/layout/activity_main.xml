@@ -60,6 +60,7 @@
             android:textSize="12dp"/>
 
         <EditText
+            android:id="@+id/usernameEditText"
             android:layout_width="250dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
@@ -67,6 +68,7 @@
             android:background="@color/white"/>
 
         <EditText
+            android:id="@+id/passwordEditText"
             android:layout_width="250dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
