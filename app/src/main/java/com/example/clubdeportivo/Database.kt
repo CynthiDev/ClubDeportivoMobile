@@ -12,7 +12,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         private const val DATABASE_NAME = "ClubDeportivo.db"
         private const val DATABASE_VERSION = 3
 
-        // TABLA ADMIN:
+        // TABLA ADMIN  :
         private const val TABLE_ADMIN = "Admin"
         private const val COLUMN_ADMIN_ID = "idAdmin"
         private const val COLUMN_ADMIN_USERNAME = "username"
