@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ClubDeportivo</string>
+    <string-array name="array_actividades">
+        <item>Básquet</item>
+        <item>Fútbol</item>
+        <item>Pilates</item>
+        <item>Gimnasio</item>
+        <item>Yoga</item>
+    </string-array>
 </resources>

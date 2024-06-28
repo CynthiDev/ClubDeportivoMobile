@@ -11,9 +11,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:padding="10dp"
+        >
+        <!--android:layout_alignParentTop="true"-->
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -21,7 +22,7 @@
             android:src="@drawable/header"/>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Servicio de pagos"
             android:textColor="#3014FF"
@@ -31,39 +32,62 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:text="Puedes abonar cuotas de Socios o actividades de No Socios"
             android:textAlignment="center"
             android:textColor="#FEFEFE"
+            android:paddingVertical="10dp"
             android:textStyle="bold"
             android:textSize="12dp"/>
 
-        <EditText
-            android:layout_width="380dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:paddingHorizontal="20dp"
-            android:hint="Buscar por DNI"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
 
-            android:background="@drawable/rounded_edittext"/>
+            <EditText
+                android:id="@+id/et_dni"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="4"
+                android:paddingHorizontal="20dp"
+                android:hint="Buscar por DNI"
+                android:background="@drawable/rounded_edittext" />
+
+            <Button
+                android:id="@+id/btnBuscar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="2"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="#EDE246"
+                android:text="Buscar"
+                android:textColor="@color/black" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Información del Socio -->
     <LinearLayout
+        android:id="@+id/ll_socio_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main"
-        android:layout_marginTop="220dp"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_marginTop="250dp"
+        android:padding="10dp"
+
+        android:visibility="gone">
+        <!--android:layout_below="@+id/btnBuscar"-->
 
         <TextView
+            android:id="@+id/tv_socio_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Socio N° 999999"
+            android:text="Información del Socio"
             android:textColor="#FEFEFE"
             android:textStyle="bold"
-            android:textSize="20dp"/>
+            android:textSize="15dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,45 +95,44 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/tv_cuota"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="3"
                 android:layout_margin="5dp"
                 android:background="@drawable/rounded_get"
                 android:gravity="center"
-                android:text="001-03  26/06/08  3600000"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/btnPagarSocio"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_margin="5dp"
                 android:layout_weight="1"
+                android:layout_margin="5dp"
                 android:backgroundTint="#EDE246"
-                android:text="Abonar"
+                android:text="Pagar"
                 android:textColor="@color/black" />
-
         </LinearLayout>
-
     </LinearLayout>
-
     <!-- Información del No Socio -->
     <LinearLayout
+        android:id="@+id/ll_no_socio_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="250dp"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:layout_below="@+id/ll_socio_info"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No Socio N° 999999"
+            android:text="Información del No Socio"
             android:textColor="#FEFEFE"
             android:textStyle="bold"
-            android:textSize="20dp"/>
+            android:textSize="15dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -117,14 +140,12 @@
             android:orientation="horizontal">
 
             <Spinner
+                android:id="@+id/sp_actividades"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_margin="5dp"
-                android:paddingHorizontal="20dp"
                 android:layout_weight="3"
-                android:background="@drawable/rounded_get"
-                android:spinnerMode="dropdown"
-                android:textColor="@color/black"/>
+                android:layout_margin="5dp"
+                android:background="@drawable/rounded_spinner" />
 
             <Button
                 android:id="@+id/btnPagarNoSocio"
@@ -133,18 +154,21 @@
                 android:layout_weight="1"
                 android:layout_margin="5dp"
                 android:backgroundTint="#EDE246"
-                android:textColor="@color/black"
-                android:text="Abonar"/>
+                android:text="Pagar"
+                android:textColor="@color/black" />
+
 
         </LinearLayout>
+
     </LinearLayout>
 
     <!-- Lista de cuotas a vencer -->
     <LinearLayout
+        android:id="@+id/ll_lista_cuotas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main"
-        android:layout_marginTop="400dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="350dp"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -153,34 +177,36 @@
             android:layout_height="wrap_content"
             android:text="LISTA DE CUOTAS A VENCER"
             android:textColor="#FEFEFE"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
+            android:paddingHorizontal="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_dia_hoy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:text=""
+            android:textColor="#FEFEFE"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_info_cuotas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
-            android:text="26/06/24"
+            android:text=""
             android:textColor="#FEFEFE"
+            android:textSize="14dp"
             android:textStyle="bold"
-            android:textSize="14dp"/>
+            android:visibility="gone"/>
 
-        <!-- Ejemplo de cuota -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="3"
-                android:layout_margin="5dp"
-                android:background="@drawable/rounded_get"
-                android:textColor="@color/black"
-                android:text="001-03                    $10000                    3600000"/>
-
-        </LinearLayout>
+            android:orientation="horizontal"/>
 
     </LinearLayout>
 
@@ -234,5 +260,6 @@
             android:src="@drawable/iconosalir" />
 
     </LinearLayout>
+
 
 </RelativeLayout>
