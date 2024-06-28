@@ -42,4 +42,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // https://mvnrepository.com/artifact/com.github.GrenderG/Toasty
+    implementation("com.github.GrenderG:Toasty:1.5.2")
+
 }

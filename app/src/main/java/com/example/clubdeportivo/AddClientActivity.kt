@@ -1,10 +1,10 @@
 package com.example.clubdeportivo
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -17,8 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.clubdeportivo.enums.ModalidadDePago
 import com.example.clubdeportivo.helpers.DatabaseHelper
-import java.io.IOException
-import kotlin.math.log
+import es.dmoral.toasty.Toasty
 
 
 class AddClientActivity : AppCompatActivity() {
@@ -35,7 +34,7 @@ class AddClientActivity : AppCompatActivity() {
         val botonCertificado = findViewById<Button>(R.id.save_apto_fisico_button)
         botonCertificado.setOnClickListener {
             hasAptoFisico = true
-            Toast.makeText(this, "Apto físico cargado correctamente", Toast.LENGTH_SHORT).show()
+            Toasty.success(this, "Apto físico cargado correctamente", Toast.LENGTH_SHORT).show()
             botonCertificado.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.lightViolet))
         }
 
@@ -69,6 +68,7 @@ class AddClientActivity : AppCompatActivity() {
 
 
         //METODO DE PAGO LIST
+        //todo: evaluar, si es socio no deberia mostrar metodo de pago, porque lo paga despues de 1 mes-> si se registra la cuota, pero no forma parte del formulario
         val spinerMetodoPago = findViewById<Spinner>(R.id.spinner_metodo_pago)
         var opcionesPagoList: Array<String> = arrayOf(ModalidadDePago.EFECTIVO.descripcion, ModalidadDePago.UNA_CUOTA.descripcion, ModalidadDePago.TRES_CUOTAS.descripcion);
         opcionesPagoList = arrayOf("Seleccionar método de pago") + opcionesPagoList
@@ -80,9 +80,15 @@ class AddClientActivity : AppCompatActivity() {
         spinerMetodoPago.setSelection(0)
 
 
+        //----ACTIONS-----
         //GUARDAR
         findViewById<Button>(R.id.save_client_button).setOnClickListener {
             guardarDatos(hasAptoFisico, esSocio)
+        }
+        //DESCARTAR
+        findViewById<Button>(R.id.descartar_reg_client_button).setOnClickListener {
+            val intent = Intent(this,StartActivity::class.java)
+            startActivity(intent)
         }
 
     }
@@ -99,31 +105,31 @@ class AddClientActivity : AppCompatActivity() {
         val spinerMetodoPago = findViewById<Spinner>(R.id.spinner_metodo_pago)
 
         if (nombre.isEmpty() || apellido.isEmpty() || dni.isEmpty()) {
-            Toast.makeText(this, "Debe completar todos los campos", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "Debe completar todos los campos", Toast.LENGTH_SHORT).show();
             return
         }
         if(dni.length != 8){
-            Toast.makeText(this, "El DNI debe tener 8 dígitos", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "El DNI debe tener 8 dígitos", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (radioGroup.checkedRadioButtonId == -1) {
-            Toast.makeText(this, "Debe seleccionar el tipo de cliente", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "Debe seleccionar el tipo de cliente", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (spinerActivity.visibility == View.VISIBLE && spinerActivity.selectedItemPosition == 0) {
-            Toast.makeText(this, "Debe seleccionar una actividad", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "Debe seleccionar una actividad", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (spinerMetodoPago.selectedItemPosition == 0) {
-            Toast.makeText(this, "Debe seleccionar un método de pago", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "Debe seleccionar un método de pago", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (!hasAptoFisico) {
-            Toast.makeText(this, "Debe cargar el certificado de apto físico", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "Debe cargar el certificado de apto físico", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -132,14 +138,15 @@ class AddClientActivity : AppCompatActivity() {
         val metodoPago = spinerMetodoPago.getSelectedItem().toString()
         val actividad = if (!esSocio)spinerActivity.getSelectedItem().toString() else null;
         if (dniInt != null) {
+            databaseHelper = DatabaseHelper(this)
             val registrado = databaseHelper.insertarCliente(dniInt, nombre,apellido,esSocio, metodoPago,actividad)
             if (registrado){
-                Toast.makeText(this, "El cliente ha sido registrado" , Toast.LENGTH_SHORT).show()
+                Toasty.success(this, "El cliente ha sido registrado" , Toast.LENGTH_SHORT).show()
             }else{
-                Toast.makeText(this, "Existe un cliente con el mismo DNI" , Toast.LENGTH_SHORT).show()
+                Toasty.error(this, "Error al guardar, existe un cliente con el mismo DNI" , Toast.LENGTH_SHORT).show()
             }
         }else{
-            Toast.makeText(this, "Debe completar el campo DNI", Toast.LENGTH_SHORT).show()
+            Toasty.warning(this, "Debe completar el campo DNI", Toast.LENGTH_SHORT).show()
         }
 
 

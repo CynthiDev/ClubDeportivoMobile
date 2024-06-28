@@ -274,7 +274,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun insertarPago(esSocio: Boolean, cuotaID: Int?, modalidadPago: String, actividad: String?) {
         val db = this.writableDatabase
         val values = ContentValues()
-        values.put(COLUMN_PAGOS_FECHA_PAGO, LocalDate.now().toString()) // fecha actual
+        values.put(COLUMN_PAGOS_FECHA_PAGO, Utils.formatDateString(LocalDate.now().toString())) // fecha actual
         values.put(COLUMN_PAGOS_MODALIDAD, modalidadPago)
         values.put(COLUMN_PAGOS_CUOTA_ID, if (esSocio)cuotaID else null)
         values.put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, if (!esSocio)actividad else null)  //todo: acividad no relacionada al NoSocio
@@ -286,7 +286,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val db = this.writableDatabase
         val values = ContentValues()
         values.put(COLUMN_CUOTA_PRECIO, 15000)
-        values.put(COLUMN_CUOTA_FECHA_VENC, LocalDate.now().plusDays(30).toString()) // 30 días posteriores a la fecha actual
+        values.put(COLUMN_CUOTA_FECHA_VENC, Utils.formatDateString(LocalDate.now().plusDays(30).toString())) // 30 días posteriores a la fecha actual
         values.put(COLUMN_CUOTA_ESTADO, EstadoDePago.IMPAGO.toString())
         values.put(COLUMN_CUOTA_CLIENTE_DNI, dni)
         val cuotaId = db.insert(TABLE_CUOTAS, null, values)

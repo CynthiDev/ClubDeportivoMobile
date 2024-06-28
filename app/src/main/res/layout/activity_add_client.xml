@@ -136,6 +136,7 @@
                 android:layout_marginRight="20dp"
                 android:textColor="@color/black"/>
             <Button
+                android:id="@+id/descartar_reg_client_button"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_weight="1"
