@@ -2,6 +2,7 @@ package com.example.clubdeportivo.helpers
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
@@ -11,6 +12,7 @@ import com.example.clubdeportivo.enums.Actividad
 import com.example.clubdeportivo.enums.EstadoDePago
 import com.example.clubdeportivo.enums.ModalidadDePago
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
 
@@ -39,11 +41,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
         // TABLA CUOTAS:
         private const val TABLE_CUOTAS = "Cuota"
-        private const val COLUMN_CUOTA_ID = "id"
-        private const val COLUMN_CUOTA_PRECIO = "precio" // precio fijo mensual $10000
+        const val COLUMN_CUOTA_ID = "id"
+        const val COLUMN_CUOTA_PRECIO = "precio" // precio fijo mensual $10000
         private const val COLUMN_CUOTA_FECHA_VENC = "fechaVenc" // 30 dias a la fecha de pago o 10 de cada mes
         private const val COLUMN_CUOTA_ESTADO = "estado" // PAGO O IMPAGO
-        private const val COLUMN_CUOTA_CLIENTE_DNI = "dniSocio"
+        const val COLUMN_CUOTA_CLIENTE_DNI = "dniSocio"
 
         // TABLA PAGOS:
         private const val TABLE_PAGOS = "Pago"
@@ -291,6 +293,57 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(COLUMN_CUOTA_CLIENTE_DNI, dni)
         val cuotaId = db.insert(TABLE_CUOTAS, null, values)
         return cuotaId.toInt()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun consultarCuotasAVencer() : Cursor? {
+        val db = this.readableDatabase
+        val formato = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val fecha = LocalDate.now()
+
+        val diaHoy = fecha.format(formato)
+        val query = "SELECT * FROM ${TABLE_CUOTAS} WHERE ${COLUMN_CUOTA_FECHA_VENC} = ?"
+        return db.rawQuery(query, arrayOf(diaHoy))
+    }
+
+    fun isSocio(dni: Int): Boolean {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT $COLUMN_CLIENTE_ES_SOCIO FROM $TABLE_CLIENTES WHERE $COLUMN_CLIENTE_DNI = ?", arrayOf(dni.toString()))
+        val isSocio = if (cursor.moveToFirst()) {
+            cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CLIENTE_ES_SOCIO)) == 1
+        } else {
+            false
+        }
+        cursor.close()
+        db.close()
+        return isSocio
+    }
+
+    fun getCuotaImpaga(dni: Int): String {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT $COLUMN_CUOTA_ID, $COLUMN_CUOTA_PRECIO, $COLUMN_CUOTA_FECHA_VENC FROM $TABLE_CUOTAS WHERE $COLUMN_CUOTA_CLIENTE_DNI = ? AND $COLUMN_CUOTA_ESTADO = 0", arrayOf(dni.toString()))
+        val cuotaImpaga = if (cursor.moveToFirst()) {
+            "Cuota.: ${cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_ID))} | $${cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_PRECIO))} | ${cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_FECHA_VENC))}"
+        } else {
+            "No tiene cuotas impagas."
+        }
+        cursor.close()
+        db.close()
+        return cuotaImpaga
+    }
+
+    fun getActividades(): List<String> {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT $COLUMN_ACTIVIDAD_NOMBRE FROM $TABLE_ACTIVIDADES", null)
+        val actividades = mutableListOf<String>()
+        if (cursor.moveToFirst()) {
+            do {
+                actividades.add(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ACTIVIDAD_NOMBRE)))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return actividades
     }
 
 }

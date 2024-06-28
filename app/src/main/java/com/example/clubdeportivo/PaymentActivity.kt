@@ -25,17 +25,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.clubdeportivo.Database.Companion.COLUMN_CLIENTE_NOMBRE
-import com.example.clubdeportivo.Database.Companion.COLUMN_CUOTA_CLIENTE_DNI
-import com.example.clubdeportivo.Database.Companion.COLUMN_CUOTA_FECHA_VENC
-import com.example.clubdeportivo.Database.Companion.COLUMN_CUOTA_ID
-import com.example.clubdeportivo.Database.Companion.COLUMN_CUOTA_PRECIO
+import com.example.clubdeportivo.helpers.DatabaseHelper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
 class PaymentActivity : AppCompatActivity() {
-    private lateinit var dbHelper: Database
+    private lateinit var dbHelper: DatabaseHelper
     private lateinit var listaCuotasAVencer : TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -51,7 +47,7 @@ class PaymentActivity : AppCompatActivity() {
             insets
         }
 
-        dbHelper = Database(this)
+        dbHelper = DatabaseHelper(this)
 
         val btnIngreso: ImageButton = findViewById(R.id.btnInicio)
         btnIngreso.setOnClickListener {
@@ -127,9 +123,9 @@ class PaymentActivity : AppCompatActivity() {
 
         if(cursorCuotas != null && cursorCuotas.moveToFirst()) {
             do{
-                val idCuota = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(COLUMN_CUOTA_ID))
-                val precioCuota = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(COLUMN_CUOTA_PRECIO))
-                val dniSocio = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(COLUMN_CUOTA_CLIENTE_DNI))
+                val idCuota = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_ID))
+                val precioCuota = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_PRECIO))
+                val dniSocio = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_CLIENTE_DNI))
 
                 val button = Button(this)
 
