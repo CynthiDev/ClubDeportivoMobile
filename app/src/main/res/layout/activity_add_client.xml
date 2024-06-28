@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -10,86 +9,90 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="340dp"
+        android:layout_centerInParent="true"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="Cargar Datos"
             android:textColor="#FEFEFE"
             android:textStyle="bold"
             android:textSize="30dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:layout_marginVertical="30dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
             android:orientation="horizontal">
             <Button
                 android:layout_width="0dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
+                android:layout_marginRight="20dp"
                 android:text="Perfil"
                 android:backgroundTint="#FEFEFE"
                 android:textColor="@color/black"/>
             <Button
+                android:id="@+id/save_apto_fisico_button"
                 android:layout_width="0dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
                 android:text="Certificado"
                 android:backgroundTint="#FEFEFE"
                 android:textColor="@color/black"/>
         </LinearLayout>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:background="@drawable/rounded_edittext"
-            android:padding="20dp"
-            android:text="Nombre"/>
 
         <EditText
+            android:id="@+id/nameEditText"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"
             android:background="@drawable/rounded_edittext"
-            android:padding="20dp"
-            android:text="Apellido"/>
+            android:hint="Nombre"
+            android:paddingHorizontal="20dp" />
+
         <EditText
+            android:id="@+id/lastNameEditText"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"
             android:background="@drawable/rounded_edittext"
-            android:padding="20dp"
-            android:text="DNI"/>
+            android:hint="Apellido"
+            android:paddingHorizontal="20dp" />
+
+        <EditText
+            android:id="@+id/dniEditText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="DNI"
+            android:paddingHorizontal="20dp"
+            android:inputType="number" />
 
         <RadioGroup
             android:id="@+id/esSocio"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="60dp"
             android:orientation="horizontal"
             android:gravity="center">
-
 
             <RadioButton
                 android:id="@+id/socio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="Socio"/>
+                android:text="Socio"
+                android:layout_marginEnd="20dp" />
 
             <RadioButton
                 android:id="@+id/nosocio"
@@ -99,48 +102,46 @@
                 android:text="No Socio" />
 
         </RadioGroup>
-        <!--HARDCODEAR-->
-        <!--SPINNER DE ACTIVIDAD SI SELECCIONA NO SOCIO-->
+
         <Spinner
+            android:id="@+id/spinner_actividad"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"
             android:background="@drawable/rounded_edittext"
-            android:padding="20dp"/>
-        <!--SPINNER DE METODO PAGO SOCIO Y NO SOCIO-->
+            android:paddingHorizontal="20dp"
+            android:visibility="gone" />  <!--es para que no se muestre por defecto-->
+
         <Spinner
+            android:id="@+id/spinner_metodo_pago"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"
             android:background="@drawable/rounded_edittext"
-            android:padding="20dp"/>
+            android:paddingHorizontal="20dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
             android:orientation="horizontal">
             <Button
+                android:id="@+id/save_client_button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:layout_margin="10dp"
                 android:text="Guardar"
+                android:layout_marginRight="20dp"
                 android:textColor="@color/black"/>
             <Button
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:layout_margin="10dp"
                 android:text="Descartar"
-                android:backgroundTint="#E91E1E"
+                android:backgroundTint="#bc2d2d"
                 android:textColor="@color/black"/>
         </LinearLayout>
     </LinearLayout>
-
-
 </RelativeLayout>

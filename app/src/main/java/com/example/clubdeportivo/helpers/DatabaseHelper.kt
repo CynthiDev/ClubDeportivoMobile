@@ -1,16 +1,22 @@
-package com.example.clubdeportivo
+package com.example.clubdeportivo.helpers
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import com.example.clubdeportivo.enums.Actividad
+import com.example.clubdeportivo.enums.EstadoDePago
+import com.example.clubdeportivo.enums.ModalidadDePago
+import java.time.LocalDate
 
-class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
 
     companion object {
         private const val DATABASE_NAME = "ClubDeportivo.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 1
 
         // TABLA ADMIN  :
         private const val TABLE_ADMIN = "Admin"
@@ -54,37 +60,41 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         try {
             db.beginTransaction()
 
-            // CREACION Y CARGA DE DATOS TABLA ADMIN
+            // CREACION
+            //TABLA ADMIN
             val createAdminTable = "CREATE TABLE $TABLE_ADMIN ($COLUMN_ADMIN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "$COLUMN_ADMIN_USERNAME TEXT, $COLUMN_ADMIN_PASSWORD TEXT)"
+                    "$COLUMN_ADMIN_USERNAME TEXT UNIQUE, $COLUMN_ADMIN_PASSWORD TEXT)"
             db.execSQL(createAdminTable)
             Log.d("Database", "Creacion tabla $TABLE_ADMIN")
 
-            // CREACION Y CARGA DE DATOS TABLA CLIENTES
+            //TABLA CLIENTES
             val createClienteTable = "CREATE TABLE $TABLE_CLIENTES ($COLUMN_CLIENTE_DNI INTEGER PRIMARY KEY, " +
                     "$COLUMN_CLIENTE_NOMBRE TEXT, $COLUMN_CLIENTE_APELLIDO TEXT, $COLUMN_CLIENTE_APTO_FISICO INTEGER, $COLUMN_CLIENTE_ES_SOCIO INTEGER)"
             db.execSQL(createClienteTable)
             Log.d("Database", "Creacion tabla $TABLE_CLIENTES")
 
-            // CREACION Y CARGA DE DATOS TABLA ACTIVIDADES
+            //TABLA ACTIVIDADES
             val createActividadesTable = "CREATE TABLE $TABLE_ACTIVIDADES ($COLUMN_ACTIVIDAD_NOMBRE TEXT PRIMARY KEY, " +
                     "$COLUMN_ACTIVIDAD_PRECIO INTEGER)"
             db.execSQL(createActividadesTable)
             Log.d("Database", "Creacion tabla $TABLE_ACTIVIDADES")
 
-            // CREACION Y CARGA DE DATOS TABLA CUOTAS
+            //TABLA CUOTAS
             val createCuotasTable = "CREATE TABLE $TABLE_CUOTAS ($COLUMN_CUOTA_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "$COLUMN_CUOTA_PRECIO INTEGER, $COLUMN_CUOTA_FECHA_VENC TEXT, $COLUMN_CUOTA_ESTADO INTEGER, $COLUMN_CUOTA_CLIENTE_DNI INTEGER)"
             db.execSQL(createCuotasTable)
             Log.d("Database", "Creacion tabla $TABLE_CUOTAS")
 
-            // CREACION Y CARGA DE DATOS TABLA PAGOS
+            //TABLA PAGOS
             val createPagosTable = "CREATE TABLE $TABLE_PAGOS ($COLUMN_PAGOS_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "$COLUMN_PAGOS_FECHA_PAGO TEXT, $COLUMN_PAGOS_MODALIDAD TEXT, $COLUMN_PAGOS_CUOTA_ID INTEGER, $COLUMN_PAGOS_ACTIVIDAD_NOMBRE TEXT)"
             db.execSQL(createPagosTable)
             Log.d("Database", "Creacion tabla $TABLE_PAGOS")
 
-            // CARGA DATOS ADMIN
+
+
+            // CARGA DATOS
+            // ADMIN
             val adminValues = ContentValues().apply {
                 put(COLUMN_ADMIN_USERNAME, "a")
                 put(COLUMN_ADMIN_PASSWORD, "z")
@@ -92,7 +102,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             db.insert(TABLE_ADMIN, null, adminValues)
             Log.d("Database", "Admin data ok")
 
-            // - CLIENTE SOCIO
+            //SOCIO
             val cliente1Values = ContentValues().apply {
                 put(COLUMN_CLIENTE_DNI, 36000000) // es socio
                 put(COLUMN_CLIENTE_NOMBRE, "Pedro")
@@ -103,7 +113,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             db.insert(TABLE_CLIENTES, null, cliente1Values)
             Log.d("Database", "Cliente data (Pedro)")
 
-            // - NO SOCIO
+            //NO SOCIO
             val cliente2Values = ContentValues().apply {
                 put(COLUMN_CLIENTE_DNI, 37000000) // no es socio
                 put(COLUMN_CLIENTE_NOMBRE, "Juana")
@@ -114,25 +124,25 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             db.insert(TABLE_CLIENTES, null, cliente2Values)
             Log.d("Database", "Cliente data (Juana)")
 
-            // FUTBOL
+            // ACTIVIDAD FUTBOL
             val act1Values = ContentValues().apply {
-                put(COLUMN_ACTIVIDAD_NOMBRE, "Futbol")
+                put(COLUMN_ACTIVIDAD_NOMBRE, Actividad.FUTBOL.toString())
                 put(COLUMN_ACTIVIDAD_PRECIO, 1000)
             }
             db.insert(TABLE_ACTIVIDADES, null, act1Values)
             Log.d("Database", "Actividad Futbol")
 
-            // VOLEY
+            // ACTIVIDAD VOLEY
             val act2Values = ContentValues().apply {
-                put(COLUMN_ACTIVIDAD_NOMBRE, "Voley")
+                put(COLUMN_ACTIVIDAD_NOMBRE, Actividad.VOLEY.toString())
                 put(COLUMN_ACTIVIDAD_PRECIO, 1000)
             }
             db.insert(TABLE_ACTIVIDADES, null, act2Values)
             Log.d("Database", "Actividad Voley")
 
-            // NATACION
+            //ACTIVIDAD  NATACION
             val act3Values = ContentValues().apply {
-                put(COLUMN_ACTIVIDAD_NOMBRE, "Natacion")
+                put(COLUMN_ACTIVIDAD_NOMBRE, Actividad.NATACION.toString())
                 put(COLUMN_ACTIVIDAD_PRECIO, 2000)
             }
             db.insert(TABLE_ACTIVIDADES, null, act3Values)
@@ -142,7 +152,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             val cuota1Values = ContentValues().apply {
                 put(COLUMN_CUOTA_PRECIO, 10000)
                 put(COLUMN_CUOTA_FECHA_VENC, "20/05/2024")
-                put(COLUMN_CUOTA_ESTADO, 1) // PAGO
+                put(COLUMN_CUOTA_ESTADO, EstadoDePago.PAGO.toString())
                 put(COLUMN_CUOTA_CLIENTE_DNI, 36000000) // SOCIO
             }
             db.insert(TABLE_CUOTAS, null, cuota1Values)
@@ -152,7 +162,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             val cuota2Values = ContentValues().apply {
                 put(COLUMN_CUOTA_PRECIO, 10000)
                 put(COLUMN_CUOTA_FECHA_VENC, "26/06/2024")
-                put(COLUMN_CUOTA_ESTADO, 0) // IMPAGO
+                put(COLUMN_CUOTA_ESTADO, EstadoDePago.IMPAGO.toString())
                 put(COLUMN_CUOTA_CLIENTE_DNI, 36000000) // SOCIO
             }
             db.insert(TABLE_CUOTAS, null, cuota2Values)
@@ -161,7 +171,7 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             // PAGO 1
             val pago1Values = ContentValues().apply {
                 put(COLUMN_PAGOS_FECHA_PAGO, "25/05/2024")
-                put(COLUMN_PAGOS_MODALIDAD, "EFECTIVO")
+                put(COLUMN_PAGOS_MODALIDAD, ModalidadDePago.EFECTIVO.descripcion)
                 put(COLUMN_PAGOS_CUOTA_ID, 1) // SOCIO
                 put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, "")
             }
@@ -171,9 +181,9 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             // PAGO 2
             val pago2Values = ContentValues().apply {
                 put(COLUMN_PAGOS_FECHA_PAGO, "25/05/2024")
-                put(COLUMN_PAGOS_MODALIDAD, "3 CUOTAS")
+                put(COLUMN_PAGOS_MODALIDAD, ModalidadDePago.TRES_CUOTAS.descripcion)
                 put(COLUMN_PAGOS_CUOTA_ID, 0) // NO SOCIO
-                put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, "FUTBOL")
+                put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, Actividad.FUTBOL.toString())
             }
             db.insert(TABLE_PAGOS, null, pago2Values)
             Log.d("Database", "Pago 2")
@@ -181,9 +191,9 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             // PAGO 3
             val pago3Values = ContentValues().apply {
                 put(COLUMN_PAGOS_FECHA_PAGO, "25/05/2024")
-                put(COLUMN_PAGOS_MODALIDAD, "1 CUOTA")
+                put(COLUMN_PAGOS_MODALIDAD, ModalidadDePago.UNA_CUOTA.descripcion)
                 put(COLUMN_PAGOS_CUOTA_ID, 0) // NO SOCIO
-                put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, "VOLEY")
+                put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, Actividad.VOLEY.toString())
             }
             db.insert(TABLE_PAGOS, null, pago3Values)
             Log.d("Database", "Pago 3")
@@ -213,4 +223,74 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         db.close()
         return isValid
     }
+
+
+    // ACTIVIDADES LIST
+    fun getAllActivitys(): Array<String> {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT $COLUMN_ACTIVIDAD_NOMBRE FROM $TABLE_ACTIVIDADES", null)
+        val opciones = mutableListOf<String>()
+
+        // Recorrer el cursor y agregar los nombres de las actividades al array
+        if (cursor.moveToFirst()) {
+            do {
+                opciones.add(cursor.getString(0))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+
+        return opciones.toTypedArray()
+    }
+
+
+    //ACTUALIZACIONES EN LA DDBB
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun insertarCliente(dni: Int, nombre: String, apellido: String, esSocio: Boolean, modalidadPago: String, actividad: String?) : Boolean{
+
+        val db = this.writableDatabase
+        val cursor = db.query(TABLE_CLIENTES, arrayOf(COLUMN_CLIENTE_DNI), "$COLUMN_CLIENTE_DNI = ?", arrayOf(dni.toString()), null, null, null)
+        if (cursor.count > 0) {
+            cursor.close()
+            return false
+        }
+        val values = ContentValues()
+        values.put(COLUMN_CLIENTE_DNI, dni)
+        values.put(COLUMN_CLIENTE_NOMBRE, nombre)
+        values.put(COLUMN_CLIENTE_APELLIDO, apellido)
+        values.put(COLUMN_CLIENTE_APTO_FISICO, 1) //se ha cargado el certificado
+        values.put(COLUMN_CLIENTE_ES_SOCIO, if (esSocio) 1 else 0)
+        db.insert(TABLE_CLIENTES, null, values)
+
+        //agrego  cuota o pago
+        if (esSocio){
+            val cuotaId = insertarCuota(dni)
+        }else{
+            insertarPago(esSocio,null, modalidadPago, actividad)
+        }
+        return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun insertarPago(esSocio: Boolean, cuotaID: Int?, modalidadPago: String, actividad: String?) {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(COLUMN_PAGOS_FECHA_PAGO, LocalDate.now().toString()) // fecha actual
+        values.put(COLUMN_PAGOS_MODALIDAD, modalidadPago)
+        values.put(COLUMN_PAGOS_CUOTA_ID, if (esSocio)cuotaID else null)
+        values.put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, if (!esSocio)actividad else null)  //todo: acividad no relacionada al NoSocio
+        db.insert(TABLE_PAGOS, null, values)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun insertarCuota(dni: Int): Int {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(COLUMN_CUOTA_PRECIO, 15000)
+        values.put(COLUMN_CUOTA_FECHA_VENC, LocalDate.now().plusDays(30).toString()) // 30 días posteriores a la fecha actual
+        values.put(COLUMN_CUOTA_ESTADO, EstadoDePago.IMPAGO.toString())
+        values.put(COLUMN_CUOTA_CLIENTE_DNI, dni)
+        val cuotaId = db.insert(TABLE_CUOTAS, null, values)
+        return cuotaId.toInt()
+    }
+
 }
