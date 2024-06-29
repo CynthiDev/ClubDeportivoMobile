@@ -6,10 +6,7 @@ import android.database.Cursor
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -18,22 +15,25 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.clubdeportivo.dto.CuotaImpaga
+import com.example.clubdeportivo.enums.ModalidadDePago
 import com.example.clubdeportivo.helpers.DatabaseHelper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import es.dmoral.toasty.Toasty
+
 
 
 class PaymentActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var listaCuotasAVencer : TextView
-
+    private lateinit var cuotaImpaga : CuotaImpaga
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,10 +72,37 @@ class PaymentActivity : AppCompatActivity() {
         val btnSalir: ImageButton = findViewById(R.id.btnSalir)
         btnSalir.setOnClickListener { finishAffinity() }
 
+
+
+
         val btnPagarSocio: Button = findViewById(R.id.btnPagarSocio)
         btnPagarSocio.setOnClickListener {
             val intent = Intent(this, PayMethodActivity::class.java)
             startActivity(intent)
+            var metodoPago : String = ""
+            val btnEfectivo = findViewById<Button>(R.id.EFECTIVO)
+            btnEfectivo.setOnClickListener {
+                metodoPago = ModalidadDePago.EFECTIVO.descripcion
+                dbHelper.pagarCuota(cuotaImpaga.idCuota, metodoPago )
+                Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
+                finishAffinity()
+            }
+            val btnUnaCuota = findViewById<Button>(R.id.UNA_CUOTA)
+            btnUnaCuota.setOnClickListener {
+                metodoPago = ModalidadDePago.UNA_CUOTA.descripcion
+                dbHelper.pagarCuota(cuotaImpaga.idCuota, metodoPago )
+                Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
+                finishAffinity()
+            }
+            val btnTresCuotas = findViewById<Button>(R.id.TRES_CUOTAS)
+            btnTresCuotas.setOnClickListener {
+                metodoPago = ModalidadDePago.TRES_CUOTAS.descripcion
+                dbHelper.pagarCuota(cuotaImpaga.idCuota, metodoPago )
+                Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
+                finishAffinity()
+            }
+
+
         }
 
         val btnPagarNoSocio: Button = findViewById(R.id.btnPagarNoSocio)
@@ -83,6 +110,7 @@ class PaymentActivity : AppCompatActivity() {
             val intent = Intent(this, PayMethodActivity::class.java)
             startActivity(intent)
         }
+
 
         val etDNI: EditText = findViewById(R.id.et_dni)
         val btnBuscar: Button = findViewById(R.id.btnBuscar)
@@ -148,11 +176,15 @@ class PaymentActivity : AppCompatActivity() {
         }
 
     private fun handleDniInput(dni: Int) {
-        val socio = dbHelper.isSocio(dni)
+        val cliente = dbHelper.getCliente(dni)
+        if (cliente){
+
+
+        val socio = dbHelper.getSocio(dni)
         if (socio) {
-            val cuotaImpaga = dbHelper.getCuotaImpaga(dni)
+            cuotaImpaga = dbHelper.getCuotaImpaga(dni)!!
             val tvCuota: TextView = findViewById(R.id.tv_cuota)
-            tvCuota.text = cuotaImpaga
+            tvCuota.text = "Cuota: ${cuotaImpaga?.idCuota} |  $${cuotaImpaga?.precio} | ${cuotaImpaga?.fechaVencimiento} "
             findViewById<LinearLayout>(R.id.ll_socio_info).visibility = View.VISIBLE
             findViewById<LinearLayout>(R.id.ll_no_socio_info).visibility = View.GONE
         } else {
@@ -168,6 +200,9 @@ class PaymentActivity : AppCompatActivity() {
             val params = findViewById<LinearLayout>(R.id.ll_lista_cuotas).layoutParams as RelativeLayout.LayoutParams
             params.addRule(RelativeLayout.BELOW, R.id.ll_no_socio_info)
             findViewById<LinearLayout>(R.id.ll_lista_cuotas).layoutParams = params
+        }
+        } else {
+            Toasty.warning(this, "No existe cliente con este DNI", Toast.LENGTH_SHORT).show()
         }
     }
 

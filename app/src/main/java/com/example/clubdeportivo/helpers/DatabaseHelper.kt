@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.clubdeportivo.dto.CuotaImpaga
 import com.example.clubdeportivo.enums.Actividad
 import com.example.clubdeportivo.enums.EstadoDePago
 import com.example.clubdeportivo.enums.ModalidadDePago
@@ -350,7 +351,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return db.rawQuery(query, arrayOf(diaHoy))
     }
 
-    fun isSocio(dni: Int): Boolean {
+    fun getCliente(dni : Int) : Boolean {
+        val db = readableDatabase
+        val cursor = db.query(TABLE_CLIENTES, arrayOf(COLUMN_CLIENTE_DNI), "$COLUMN_CLIENTE_DNI = ?", arrayOf(dni.toString()), null, null, null)
+        if (cursor.count > 0) {
+            cursor.close()
+            return true
+        }
+        return false
+    }
+
+    fun getSocio(dni: Int): Boolean {
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT $COLUMN_CLIENTE_ES_SOCIO FROM $TABLE_CLIENTES WHERE $COLUMN_CLIENTE_DNI = ?", arrayOf(dni.toString()))
         val isSocio = if (cursor.moveToFirst()) {
@@ -363,17 +374,30 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return isSocio
     }
 
-    fun getCuotaImpaga(dni: Int): String {
+
+    fun getCuotaImpaga(dni: Int): CuotaImpaga? {
         val db = readableDatabase
         val impago = EstadoDePago.IMPAGO.toString()
-        val cursor = db.rawQuery("SELECT $COLUMN_CUOTA_ID, $COLUMN_CUOTA_PRECIO, $COLUMN_CUOTA_FECHA_VENC FROM $TABLE_CUOTAS WHERE $COLUMN_CUOTA_CLIENTE_DNI = ? AND $COLUMN_CUOTA_ESTADO = ?", arrayOf(dni.toString(), impago))
-        val cuotaImpaga = if (cursor.moveToFirst()) {
-            "Cuota.: ${cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_ID))} | $${cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_PRECIO))} | ${cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_FECHA_VENC))}"
-        } else {
-            "No tiene cuotas impagas."
+        val cursor = db.rawQuery(
+            "SELECT $COLUMN_CUOTA_ID, $COLUMN_CUOTA_PRECIO, $COLUMN_CUOTA_FECHA_VENC " +
+                    "FROM $TABLE_CUOTAS " +
+                    "WHERE $COLUMN_CUOTA_CLIENTE_DNI = ? AND $COLUMN_CUOTA_ESTADO = ?",
+            arrayOf(dni.toString(), impago)
+        )
+
+        var cuotaImpaga: CuotaImpaga? = null
+
+        if (cursor.moveToFirst()) {
+            val idCuota = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_ID))
+            val precio = cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_PRECIO))
+            val fechaVencimiento = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_FECHA_VENC))
+
+            cuotaImpaga = CuotaImpaga(idCuota, precio, fechaVencimiento)
         }
+
         cursor.close()
         db.close()
+
         return cuotaImpaga
     }
 
@@ -391,4 +415,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return actividades
     }
 
+    fun pagarCuota(cuotaID: Int?, modalidadPago: String){
+        insertarPago(true, cuotaID, modalidadPago, null)
+    }
+
+    fun pagarActividad(modalidadPago: String, actividad: String?){
+        insertarPago(false, null, modalidadPago, actividad)
+    }
 }

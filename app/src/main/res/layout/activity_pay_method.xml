@@ -25,30 +25,36 @@
             android:textSize="30dp"
             android:layout_gravity="center"
             android:layout_margin="50dp"/>
+
         <Button
+            android:id="@+id/EFECTIVO"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_margin="50dp"
+            android:layout_weight="1"
             android:text="Efectivo"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
+
         <Button
+            android:id="@+id/UNA_CUOTA"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_margin="50dp"
+            android:layout_weight="1"
             android:text="Tarjeta 1 pago"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
+
         <Button
+            android:id="@+id/TRES_CUOTAS"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_margin="50dp"
-            android:text="Tarjeta 2 pago"
-            android:textSize="20dp"/>
+            android:layout_weight="1"
+            android:text="Tarjeta 3 pagos"
+            android:textSize="20dp" />
     </LinearLayout>
 
 
