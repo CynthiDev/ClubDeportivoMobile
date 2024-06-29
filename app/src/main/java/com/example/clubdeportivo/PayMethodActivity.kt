@@ -4,13 +4,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.clubdeportivo.dto.CuotaImpaga
 import com.example.clubdeportivo.enums.ModalidadDePago
 import com.example.clubdeportivo.helpers.DatabaseHelper
@@ -25,14 +21,22 @@ class PayMethodActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pay_method)
         dbHelper = DatabaseHelper(this)
 
-        val cuotaImpagaID = intent.getIntExtra("cuotaID", 0)
+        // Obtener los extras
+        val cuotaImpagaID = intent.getIntExtra("cuotaID", -1)
+        val actividadName = intent.getStringExtra("actividadName")
 
-        //PAGAR CUOTA
-        setupPaymentButtons(cuotaImpagaID)
+
+        if (actividadName != null){
+            //PAGAR ACTIVIDAD
+            setupPaymentButtonsPagarActividad(actividadName)
+        }else if (cuotaImpagaID != -1){
+            //PAGAR CUOTA
+            setupPaymentButtonsPagarCuota(cuotaImpagaID)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setupPaymentButtons(cuotaImpagaID: Int) {
+    private fun setupPaymentButtonsPagarCuota(cuotaImpagaID: Int) {
         val paymentMethods = mapOf(
             R.id.EFECTIVO to ModalidadDePago.EFECTIVO.descripcion,
             R.id.UNA_CUOTA to ModalidadDePago.UNA_CUOTA.descripcion,
@@ -41,15 +45,38 @@ class PayMethodActivity : AppCompatActivity() {
 
         paymentMethods.forEach { (buttonId, paymentDescription) ->
             findViewById<Button>(buttonId).setOnClickListener {
-                handlePayment(cuotaImpagaID, paymentDescription)
+                pagarCuota(cuotaImpagaID, paymentDescription)
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun handlePayment(cuotaImpagaID: Int, metodoPago: String) {
+    private fun pagarCuota(cuotaImpagaID: Int, metodoPago: String) {
         dbHelper.pagarCuota(cuotaImpagaID, metodoPago)
-        Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, StartActivity::class.java))
+        Toasty.success(this, "Pago de la cuota: ${cuotaImpagaID} realizado correctamente", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, PaymentActivity::class.java))
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupPaymentButtonsPagarActividad(actividad: String) {
+        val paymentMethods = mapOf(
+            R.id.EFECTIVO to ModalidadDePago.EFECTIVO.descripcion,
+            R.id.UNA_CUOTA to ModalidadDePago.UNA_CUOTA.descripcion,
+            R.id.TRES_CUOTAS to ModalidadDePago.TRES_CUOTAS.descripcion
+        )
+
+        paymentMethods.forEach { (buttonId, paymentDescription) ->
+            findViewById<Button>(buttonId).setOnClickListener {
+                pagarActiviadad(actividad, paymentDescription)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun pagarActiviadad(actividad: String, metodoPago: String) {
+        dbHelper.pagarActividad(metodoPago,actividad)
+        Toasty.success(this, "Pago de la actividad realizado correctamente", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, PaymentActivity::class.java))
     }
 }

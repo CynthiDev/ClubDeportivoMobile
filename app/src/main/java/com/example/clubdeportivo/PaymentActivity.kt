@@ -33,19 +33,13 @@ import es.dmoral.toasty.Toasty
 class PaymentActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var listaCuotasAVencer : TextView
-    private lateinit var cuotaImpaga : CuotaImpaga
+    private var cuotaImpaga : CuotaImpaga? = null
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge()
         setContentView(R.layout.activity_payment)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         dbHelper = DatabaseHelper(this)
 
@@ -72,23 +66,19 @@ class PaymentActivity : AppCompatActivity() {
         val btnSalir: ImageButton = findViewById(R.id.btnSalir)
         btnSalir.setOnClickListener { finishAffinity() }
 
-
-
-
         val btnPagarSocio: Button = findViewById(R.id.btnPagarSocio)
         btnPagarSocio.setOnClickListener {
             val intent = Intent(this, PayMethodActivity::class.java)
-            intent.putExtra("cuotaID", cuotaImpaga.idCuota)
+            intent.putExtra("cuotaID", cuotaImpaga?.idCuota)
             startActivity(intent)
-             //todo: ver que se pague todo! ok  SOCIO
-
-
-
         }
 
         val btnPagarNoSocio: Button = findViewById(R.id.btnPagarNoSocio)
         btnPagarNoSocio.setOnClickListener {
+            val spinnerActivity: Spinner = findViewById(R.id.sp_actividades)
+            val actividad = spinnerActivity.getSelectedItem().toString()
             val intent = Intent(this, PayMethodActivity::class.java)
+            intent.putExtra("actividadName", actividad)
             startActivity(intent)
         }
 
@@ -113,16 +103,18 @@ class PaymentActivity : AppCompatActivity() {
                     val dni = dni.toInt()
                     handleDniInput(dni)
                 } catch (e: NumberFormatException) {
-                    Toast.makeText(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT).show()
+                    Toasty.warning(this, "Por favor, ingrese un número válido", Toast.LENGTH_SHORT)
+                        .show()
+                    findViewById<LinearLayout>(R.id.ll_socio_info).visibility = View.GONE
+                    findViewById<LinearLayout>(R.id.ll_no_socio_info).visibility = View.GONE
                 }
             } else {
-                Toast.makeText(this, "Por favor, ingrese un DNI", Toast.LENGTH_SHORT).show()
+                Toasty.warning(this, "Por favor, ingrese un DNI", Toast.LENGTH_SHORT).show()
+                findViewById<LinearLayout>(R.id.ll_socio_info).visibility = View.GONE
+                findViewById<LinearLayout>(R.id.ll_no_socio_info).visibility = View.GONE
             }
         }
 
-        val cursorCuotas: Cursor? = dbHelper.consultarCuotasAVencer()
-
-        listaCuotasAVencer = findViewById(R.id.tv_info_cuotas)
 
         val formato = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val fecha = LocalDate.now()
@@ -130,11 +122,27 @@ class PaymentActivity : AppCompatActivity() {
         val tvDiaHoy = findViewById<TextView>(R.id.tv_dia_hoy)
         tvDiaHoy.text = diaHoy;
 
-        if(cursorCuotas != null && cursorCuotas.moveToFirst()) {
-            do{
-                val idCuota = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_ID))
-                val precioCuota = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_PRECIO))
-                val dniSocio = cursorCuotas.getString(cursorCuotas.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_CLIENTE_DNI))
+        //Consultar Cuotas a Vencer
+        listaCuotasAVencer = findViewById(R.id.tv_info_cuotas)
+
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        dbHelper = DatabaseHelper(this)
+        val cursorCuotas: Cursor? = dbHelper.consultarCuotasAVencer()
+        updateListaCuotasAVencer(cursorCuotas)
+    }
+
+    private fun updateListaCuotasAVencer(cursor: Cursor?) {
+        if (cursor != null && cursor.moveToFirst()) {
+            // Update the listaCuotasAVencer with the new data
+            do {
+                val idCuota = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_ID))
+                val precioCuota = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_PRECIO))
+                val dniSocio = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CUOTA_CLIENTE_DNI))
 
                 val button = Button(this)
 
@@ -147,27 +155,33 @@ class PaymentActivity : AppCompatActivity() {
                 var layout_cuotas = findViewById<LinearLayout>(R.id.ll_lista_cuotas)
                 layout_cuotas.addView(button)
 
-            } while (cursorCuotas.moveToNext())
-        }
-        else {
+            } while (cursor.moveToNext())
+        } else {
             listaCuotasAVencer.visibility = View.VISIBLE
             listaCuotasAVencer.text = "Cuotas no encontradas"
         }
-        cursorCuotas?.close()
-        }
+        cursor?.close()
+    }
+
+
 
     private fun handleDniInput(dni: Int) {
         val cliente = dbHelper.getCliente(dni)
         if (cliente){
 
-
         val socio = dbHelper.getSocio(dni)
         if (socio) {
-            cuotaImpaga = dbHelper.getCuotaImpaga(dni)!!
-            val tvCuota: TextView = findViewById(R.id.tv_cuota)
-            tvCuota.text = "Cuota: ${cuotaImpaga?.idCuota} |  $${cuotaImpaga?.precio} | ${cuotaImpaga?.fechaVencimiento} "
-            findViewById<LinearLayout>(R.id.ll_socio_info).visibility = View.VISIBLE
-            findViewById<LinearLayout>(R.id.ll_no_socio_info).visibility = View.GONE
+            cuotaImpaga = dbHelper.getCuotaImpaga(dni)
+            if (cuotaImpaga != null){
+                val tvCuota: TextView = findViewById(R.id.tv_cuota)
+                tvCuota.text = "Cuota: ${cuotaImpaga?.idCuota} |  $${cuotaImpaga?.precio} | ${cuotaImpaga?.fechaVencimiento} "
+                findViewById<LinearLayout>(R.id.ll_socio_info).visibility = View.VISIBLE
+                findViewById<LinearLayout>(R.id.ll_no_socio_info).visibility = View.GONE
+            }else{
+                Toasty.success(this, "El socio no tiene cuotas sin pagar", Toast.LENGTH_SHORT).show()
+            }
+
+
         } else {
             val actividades = dbHelper.getActividades()
             val spinner: Spinner = findViewById(R.id.sp_actividades)
@@ -184,6 +198,8 @@ class PaymentActivity : AppCompatActivity() {
         }
         } else {
             Toasty.warning(this, "No existe cliente con este DNI", Toast.LENGTH_SHORT).show()
+            findViewById<LinearLayout>(R.id.ll_socio_info).visibility = View.GONE
+            findViewById<LinearLayout>(R.id.ll_no_socio_info).visibility = View.GONE
         }
     }
 

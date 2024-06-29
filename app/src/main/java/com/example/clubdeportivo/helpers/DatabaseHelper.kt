@@ -347,8 +347,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val fecha = LocalDate.now()
 
         val diaHoy = fecha.format(formato)
-        val query = "SELECT * FROM ${TABLE_CUOTAS} WHERE ${COLUMN_CUOTA_FECHA_VENC} = ?"
-        return db.rawQuery(query, arrayOf(diaHoy))
+        val query = "SELECT * FROM ${TABLE_CUOTAS} WHERE ${COLUMN_CUOTA_FECHA_VENC} = ? AND ${COLUMN_CUOTA_ESTADO} = ?"
+        return db.rawQuery(query, arrayOf(diaHoy, EstadoDePago.IMPAGO.toString()))
     }
 
     fun getCliente(dni : Int) : Boolean {
@@ -427,12 +427,32 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun pagarCuota(cuotaID: Int?, modalidadPago: String){
-        actualizarEstadoCuota(cuotaID!!, EstadoDePago.PAGO.toString())
+        if (cuotaID == null) {
+            throw IllegalArgumentException("Cuota ID cannot be null")
+        }
+        val dniSocio = getDniSocioFromCuotaId(cuotaID) ?: throw IllegalStateException("Cuota ID $cuotaID not found in Cuotas table")
+
+        //ACTUALIZO DATOS
         insertarPago(true, cuotaID, modalidadPago, null)
+        actualizarEstadoCuota(cuotaID!!, EstadoDePago.PAGO.toString())
+        insertarCuota(dniSocio)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun pagarActividad(modalidadPago: String, actividad: String?){
         insertarPago(false, null, modalidadPago, actividad)
+    }
+
+
+
+    private fun getDniSocioFromCuotaId(cuotaID: Int): Int? {
+        val db = this.writableDatabase
+        val query = "SELECT $COLUMN_CUOTA_CLIENTE_DNI FROM $TABLE_CUOTAS WHERE $COLUMN_CUOTA_ID = ?"
+        val cursor = db.rawQuery(query, arrayOf(cuotaID.toString()))
+        return if (cursor.moveToFirst()) {
+            cursor.getInt(0)
+        } else {
+            null
+        }
     }
 }
