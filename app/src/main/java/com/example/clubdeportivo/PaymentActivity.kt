@@ -78,29 +78,10 @@ class PaymentActivity : AppCompatActivity() {
         val btnPagarSocio: Button = findViewById(R.id.btnPagarSocio)
         btnPagarSocio.setOnClickListener {
             val intent = Intent(this, PayMethodActivity::class.java)
+            intent.putExtra("cuotaID", cuotaImpaga.idCuota)
             startActivity(intent)
-            var metodoPago : String = ""
-            val btnEfectivo = findViewById<Button>(R.id.EFECTIVO)
-            btnEfectivo.setOnClickListener {
-                metodoPago = ModalidadDePago.EFECTIVO.descripcion
-                dbHelper.pagarCuota(cuotaImpaga.idCuota, metodoPago )
-                Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
-                finishAffinity()
-            }
-            val btnUnaCuota = findViewById<Button>(R.id.UNA_CUOTA)
-            btnUnaCuota.setOnClickListener {
-                metodoPago = ModalidadDePago.UNA_CUOTA.descripcion
-                dbHelper.pagarCuota(cuotaImpaga.idCuota, metodoPago )
-                Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
-                finishAffinity()
-            }
-            val btnTresCuotas = findViewById<Button>(R.id.TRES_CUOTAS)
-            btnTresCuotas.setOnClickListener {
-                metodoPago = ModalidadDePago.TRES_CUOTAS.descripcion
-                dbHelper.pagarCuota(cuotaImpaga.idCuota, metodoPago )
-                Toasty.success(this, "Pago realizado correctamente", Toast.LENGTH_SHORT).show()
-                finishAffinity()
-            }
+             //todo: ver que se pague todo! ok  SOCIO
+
 
 
         }

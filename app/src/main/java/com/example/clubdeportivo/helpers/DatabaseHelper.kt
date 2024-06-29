@@ -252,6 +252,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     // ACTUALIZACION EN CASO DE CAMBIOS
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TABLE_ADMIN")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CLIENTES")
@@ -292,7 +293,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     //ACTUALIZACIONES EN LA DDBB
     @RequiresApi(Build.VERSION_CODES.O)
-    fun insertarCliente(dni: Int, nombre: String, apellido: String, esSocio: Boolean, modalidadPago: String, actividad: String?) : Boolean{
+    fun insertarCliente(dni: Int, nombre: String, apellido: String, esSocio: Boolean, modalidadPago: String?, actividad: String?) : Boolean{
 
         val db = this.writableDatabase
         val cursor = db.query(TABLE_CLIENTES, arrayOf(COLUMN_CLIENTE_DNI), "$COLUMN_CLIENTE_DNI = ?", arrayOf(dni.toString()), null, null, null)
@@ -318,8 +319,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun insertarPago(esSocio: Boolean, cuotaID: Int?, modalidadPago: String, actividad: String?) {
-        val db = this.writableDatabase
+    fun insertarPago(esSocio: Boolean, cuotaID: Int?, modalidadPago: String?, actividad: String?) {        val db = this.writableDatabase
         val values = ContentValues()
         values.put(COLUMN_PAGOS_FECHA_PAGO, Utils.formatDateString(LocalDate.now().toString())) // fecha actual
         values.put(COLUMN_PAGOS_MODALIDAD, modalidadPago)
@@ -415,10 +415,23 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return actividades
     }
 
+
+    private fun actualizarEstadoCuota(cuotaID: Int, nuevoEstado: String) {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_CUOTA_ESTADO, nuevoEstado)
+        }
+        db.update(TABLE_CUOTAS, contentValues, "$COLUMN_CUOTA_ID = ?", arrayOf(cuotaID.toString()))
+        Log.d("Database", "Estado de cuota $cuotaID actualizado a $nuevoEstado")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun pagarCuota(cuotaID: Int?, modalidadPago: String){
+        actualizarEstadoCuota(cuotaID!!, EstadoDePago.PAGO.toString())
         insertarPago(true, cuotaID, modalidadPago, null)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun pagarActividad(modalidadPago: String, actividad: String?){
         insertarPago(false, null, modalidadPago, actividad)
     }

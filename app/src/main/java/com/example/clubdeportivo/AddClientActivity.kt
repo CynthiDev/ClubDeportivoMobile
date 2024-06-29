@@ -39,16 +39,19 @@ class AddClientActivity : AppCompatActivity() {
         }
 
 
-        //ACTIVIDADES LIST
+        //ACTIVIDADES y MODALIDAD DE PAGO list
         val radioGroup = findViewById<RadioGroup>(R.id.esSocio)
         val spinerActivity = findViewById<Spinner>(R.id.spinner_actividad)
+        val spinerMetodoPago = findViewById<Spinner>(R.id.spinner_metodo_pago)
         var esSocio: Boolean = false
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.nosocio -> {
                     esSocio = false
-                    spinerActivity.setVisibility(View.VISIBLE) // Mostrar el spinner
-                    // Carga las opciones del spinner
+                    spinerActivity.visibility = View.VISIBLE // Mostrar el spinner
+                    spinerMetodoPago.visibility = View.VISIBLE // Mostrar el spinner de métodos de pago
+
+                    // Carga las opciones del spinner de actividades
                     databaseHelper = DatabaseHelper(this)
                     var opcionesActivityList = databaseHelper.getAllActivitys()
                     opcionesActivityList = arrayOf("Seleccionar actividad") + opcionesActivityList
@@ -56,28 +59,26 @@ class AddClientActivity : AppCompatActivity() {
                     adapterActivity.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinerActivity.setPadding(16, 16, 16, 16) // ajusta el padding a 16dp en todos los lados
                     spinerActivity.setAdapter(adapterActivity)
-                    // Establecer el elemento "placeholder" como seleccionado por defecto
-                    spinerActivity.setSelection(0)
+                    spinerActivity.setSelection(0)// Establecer el elemento "placeholder" como seleccionado por defecto
+
+
+                    // Carga las opciones del spinner de métodos de pago
+                    var opcionesPagoList: Array<String> = arrayOf(ModalidadDePago.EFECTIVO.descripcion, ModalidadDePago.UNA_CUOTA.descripcion, ModalidadDePago.TRES_CUOTAS.descripcion);
+                    opcionesPagoList = arrayOf("Seleccionar método de pago") + opcionesPagoList
+                    val adapterPago: ArrayAdapter<String?> = ArrayAdapter<String?>(this, android.R.layout.simple_spinner_item, opcionesPagoList)
+                    adapterPago.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinerMetodoPago.setPadding(16, 16, 16, 16) // ajusta el padding a 16dp en todos los lados
+                    spinerMetodoPago.setAdapter(adapterPago)
+                    spinerMetodoPago.setSelection(0) // Establecer el elemento "placeholder" como seleccionado por defecto
                 }
                 R.id.socio -> {
                     esSocio = true
-                    spinerActivity.setVisibility(View.GONE) // Ocultar el spinner
+                    spinerActivity.visibility = View.GONE // Ocultar el spinner
+                    spinerMetodoPago.visibility = View.GONE
                 }
             }
         }
 
-
-        //METODO DE PAGO LIST
-        //todo: evaluar, si es socio no deberia mostrar metodo de pago, porque lo paga despues de 1 mes-> si se registra la cuota, pero no forma parte del formulario
-        val spinerMetodoPago = findViewById<Spinner>(R.id.spinner_metodo_pago)
-        var opcionesPagoList: Array<String> = arrayOf(ModalidadDePago.EFECTIVO.descripcion, ModalidadDePago.UNA_CUOTA.descripcion, ModalidadDePago.TRES_CUOTAS.descripcion);
-        opcionesPagoList = arrayOf("Seleccionar método de pago") + opcionesPagoList
-        val adapterPago: ArrayAdapter<String?> = ArrayAdapter<String?>(this, android.R.layout.simple_spinner_item, opcionesPagoList)
-        adapterPago.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinerMetodoPago.setPadding(16, 16, 16, 16) // ajusta el padding a 16dp en todos los lados
-        spinerMetodoPago.setAdapter(adapterPago)
-        // Establecer el elemento "placeholder" como seleccionado por defecto
-        spinerMetodoPago.setSelection(0)
 
 
         //----ACTIONS-----
@@ -123,7 +124,7 @@ class AddClientActivity : AppCompatActivity() {
             return
         }
 
-        if (spinerMetodoPago.selectedItemPosition == 0) {
+        if (spinerMetodoPago.visibility == View.VISIBLE && spinerMetodoPago.selectedItemPosition == 0) {
             Toasty.warning(this, "Debe seleccionar un método de pago", Toast.LENGTH_SHORT).show()
             return
         }
@@ -135,13 +136,16 @@ class AddClientActivity : AppCompatActivity() {
 
         // CREAR CLIENTE
         val dniInt = dni.toIntOrNull();
-        val metodoPago = spinerMetodoPago.getSelectedItem().toString()
+        val metodoPago = if (!esSocio) spinerMetodoPago.getSelectedItem().toString() else null;
         val actividad = if (!esSocio)spinerActivity.getSelectedItem().toString() else null;
         if (dniInt != null) {
             databaseHelper = DatabaseHelper(this)
             val registrado = databaseHelper.insertarCliente(dniInt, nombre,apellido,esSocio, metodoPago,actividad)
             if (registrado){
-                Toasty.success(this, "El cliente ha sido registrado" , Toast.LENGTH_SHORT).show()
+                val tipo: String = if(esSocio) "socio" else "no socio";
+                Toasty.success(this, "El ${tipo} ha sido registrado correctamente" , Toast.LENGTH_SHORT).show()
+                val intent = Intent(this,StartActivity::class.java)
+                startActivity(intent)
             }else{
                 Toasty.error(this, "Error al guardar, existe un cliente con el mismo DNI" , Toast.LENGTH_SHORT).show()
             }
