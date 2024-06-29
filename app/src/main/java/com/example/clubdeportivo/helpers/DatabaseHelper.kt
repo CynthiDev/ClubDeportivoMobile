@@ -217,7 +217,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
             // PAGO 1
             val pago1Values = ContentValues().apply {
-                put(COLUMN_PAGOS_FECHA_PAGO, Utils.formatDateString(LocalDate.now().toString()))
+                put(COLUMN_PAGOS_FECHA_PAGO, "25/05/2024")
                 put(COLUMN_PAGOS_MODALIDAD, ModalidadDePago.EFECTIVO.descripcion)
                 put(COLUMN_PAGOS_CUOTA_ID, 1) // SOCIO
                 put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, "")
@@ -293,7 +293,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     //ACTUALIZACIONES EN LA DDBB
     @RequiresApi(Build.VERSION_CODES.O)
-    fun insertarCliente(dni: Int, nombre: String, apellido: String, esSocio: Boolean, modalidadPago: String?, actividad: String?) : Boolean{
+    fun insertarCliente(dni: Int, nombre: String, apellido: String, esSocio: Boolean, modalidadPago: String?, actividad: String?, hasAptoFisico: Boolean) : Boolean{
 
         val db = this.writableDatabase
         val cursor = db.query(TABLE_CLIENTES, arrayOf(COLUMN_CLIENTE_DNI), "$COLUMN_CLIENTE_DNI = ?", arrayOf(dni.toString()), null, null, null)
@@ -305,7 +305,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(COLUMN_CLIENTE_DNI, dni)
         values.put(COLUMN_CLIENTE_NOMBRE, nombre)
         values.put(COLUMN_CLIENTE_APELLIDO, apellido)
-        values.put(COLUMN_CLIENTE_APTO_FISICO, 1) //se ha cargado el certificado
+        values.put(COLUMN_CLIENTE_APTO_FISICO, if (hasAptoFisico)1 else 0)
         values.put(COLUMN_CLIENTE_ES_SOCIO, if (esSocio) 1 else 0)
         db.insert(TABLE_CLIENTES, null, values)
 

@@ -140,7 +140,7 @@ class AddClientActivity : AppCompatActivity() {
         val actividad = if (!esSocio)spinerActivity.getSelectedItem().toString() else null;
         if (dniInt != null) {
             databaseHelper = DatabaseHelper(this)
-            val registrado = databaseHelper.insertarCliente(dniInt, nombre,apellido,esSocio, metodoPago,actividad)
+            val registrado = databaseHelper.insertarCliente(dniInt, nombre,apellido,esSocio, metodoPago,actividad, hasAptoFisico)
             if (registrado){
                 val tipo: String = if(esSocio) "socio" else "no socio";
                 Toasty.success(this, "El ${tipo} ha sido registrado correctamente" , Toast.LENGTH_SHORT).show()

@@ -122,19 +122,13 @@ class PaymentActivity : AppCompatActivity() {
         val tvDiaHoy = findViewById<TextView>(R.id.tv_dia_hoy)
         tvDiaHoy.text = diaHoy;
 
-        //Consultar Cuotas a Vencer
+        //LISTA DE CUOTAS A VENCER
         listaCuotasAVencer = findViewById(R.id.tv_info_cuotas)
-
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onResume() {
-        super.onResume()
-        dbHelper = DatabaseHelper(this)
         val cursorCuotas: Cursor? = dbHelper.consultarCuotasAVencer()
         updateListaCuotasAVencer(cursorCuotas)
+
     }
+
 
     private fun updateListaCuotasAVencer(cursor: Cursor?) {
         if (cursor != null && cursor.moveToFirst()) {
@@ -151,7 +145,7 @@ class PaymentActivity : AppCompatActivity() {
                 button.setTextColor(Color.BLACK)
 
 
-                button.text = "Cuota:$idCuota  |  $$precioCuota  |  DNI:$dniSocio "
+                button.text = "Cuota:$idCuota  |  $$precioCuota  |  DNI:$dniSocio"
                 var layout_cuotas = findViewById<LinearLayout>(R.id.ll_lista_cuotas)
                 layout_cuotas.addView(button)
 
