@@ -52,9 +52,10 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="4"
-                android:paddingHorizontal="20dp"
+                android:background="@drawable/rounded_edittext"
                 android:hint="Buscar por DNI"
-                android:background="@drawable/rounded_edittext" />
+                android:inputType="number"
+                android:paddingHorizontal="20dp" />
 
             <Button
                 android:id="@+id/btnBuscar"

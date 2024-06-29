@@ -151,7 +151,7 @@ class PaymentActivity : AppCompatActivity() {
                 button.setTextColor(Color.BLACK)
 
 
-                button.text = "id:$idCuota    $$precioCuota    DNI:$dniSocio "
+                button.text = "Cuota:$idCuota  |  $$precioCuota  |  DNI:$dniSocio "
                 var layout_cuotas = findViewById<LinearLayout>(R.id.ll_lista_cuotas)
                 layout_cuotas.addView(button)
 

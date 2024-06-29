@@ -65,7 +65,10 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:hint="Ingresar Usuario"
-            android:background="@color/white"/>
+            android:background="@drawable/rounded_edittext"
+            android:paddingHorizontal="20dp"/>
+
+
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -75,7 +78,9 @@
             android:layout_marginTop="30dp"
             android:hint="Ingresar Contraseña"
             android:inputType="textPassword"
-            android:background="@color/white"/>
+            android:background="@drawable/rounded_edittext"
+            android:paddingHorizontal="20dp"/>
+
 
         <LinearLayout
             android:layout_width="wrap_content"
