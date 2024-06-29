@@ -56,6 +56,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val COLUMN_PAGOS_ACTIVIDAD_NOMBRE = "nombreActividad"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(db: SQLiteDatabase) {
         Log.d("Database", "onCreate")
 
@@ -104,7 +105,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             db.insert(TABLE_ADMIN, null, adminValues)
             Log.d("Database", "Admin data ok")
 
-            //SOCIO
+            //SOCIO1
             val cliente1Values = ContentValues().apply {
                 put(COLUMN_CLIENTE_DNI, 36000000) // es socio
                 put(COLUMN_CLIENTE_NOMBRE, "Pedro")
@@ -115,15 +116,38 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             db.insert(TABLE_CLIENTES, null, cliente1Values)
             Log.d("Database", "Cliente data (Pedro)")
 
-            //NO SOCIO
+            //SOCIO2
             val cliente2Values = ContentValues().apply {
+                put(COLUMN_CLIENTE_DNI, 36000001) // es socio
+                put(COLUMN_CLIENTE_NOMBRE, "Juan")
+                put(COLUMN_CLIENTE_APELLIDO, "Gris")
+                put(COLUMN_CLIENTE_APTO_FISICO, 1)
+                put(COLUMN_CLIENTE_ES_SOCIO, 1)
+            }
+            db.insert(TABLE_CLIENTES, null, cliente2Values)
+            Log.d("Database", "Cliente2 data")
+
+
+            //SOCIO3
+            val cliente3Values = ContentValues().apply {
+                put(COLUMN_CLIENTE_DNI, 36000002) // es socio
+                put(COLUMN_CLIENTE_NOMBRE, "Maria")
+                put(COLUMN_CLIENTE_APELLIDO, "Rojo")
+                put(COLUMN_CLIENTE_APTO_FISICO, 1)
+                put(COLUMN_CLIENTE_ES_SOCIO, 1)
+            }
+            db.insert(TABLE_CLIENTES, null, cliente3Values)
+            Log.d("Database", "Cliente3 data")
+
+            //NO SOCIO
+            val cliente4Values = ContentValues().apply {
                 put(COLUMN_CLIENTE_DNI, 37000000) // no es socio
                 put(COLUMN_CLIENTE_NOMBRE, "Juana")
                 put(COLUMN_CLIENTE_APELLIDO, "Azul")
                 put(COLUMN_CLIENTE_APTO_FISICO, 1)
                 put(COLUMN_CLIENTE_ES_SOCIO, 0)
             }
-            db.insert(TABLE_CLIENTES, null, cliente2Values)
+            db.insert(TABLE_CLIENTES, null, cliente4Values)
             Log.d("Database", "Cliente data (Juana)")
 
             // ACTIVIDAD FUTBOL
@@ -163,16 +187,36 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             // CUOTA 2 IMPAGA
             val cuota2Values = ContentValues().apply {
                 put(COLUMN_CUOTA_PRECIO, 10000)
-                put(COLUMN_CUOTA_FECHA_VENC, "26/06/2024")
+                put(COLUMN_CUOTA_FECHA_VENC, Utils.formatDateString(LocalDate.now().toString()))
                 put(COLUMN_CUOTA_ESTADO, EstadoDePago.IMPAGO.toString())
                 put(COLUMN_CUOTA_CLIENTE_DNI, 36000000) // SOCIO
             }
             db.insert(TABLE_CUOTAS, null, cuota2Values)
             Log.d("Database", "Cuota 2 (Impaga)")
 
+            // CUOTA 3 IMPAGA
+            val cuota3Values = ContentValues().apply {
+                put(COLUMN_CUOTA_PRECIO, 10000)
+                put(COLUMN_CUOTA_FECHA_VENC, Utils.formatDateString(LocalDate.now().toString()))
+                put(COLUMN_CUOTA_ESTADO, EstadoDePago.IMPAGO.toString())
+                put(COLUMN_CUOTA_CLIENTE_DNI, 36000001) // SOCIO
+            }
+            db.insert(TABLE_CUOTAS, null, cuota3Values)
+            Log.d("Database", "Cuota 2 (Impaga)")
+
+            // CUOTA 4 IMPAGA
+            val cuota4Values = ContentValues().apply {
+                put(COLUMN_CUOTA_PRECIO, 10000)
+                put(COLUMN_CUOTA_FECHA_VENC, Utils.formatDateString(LocalDate.now().toString()))
+                put(COLUMN_CUOTA_ESTADO, EstadoDePago.IMPAGO.toString())
+                put(COLUMN_CUOTA_CLIENTE_DNI, 36000002) // SOCIO
+            }
+            db.insert(TABLE_CUOTAS, null, cuota4Values)
+            Log.d("Database", "Cuota 2 (Impaga)")
+
             // PAGO 1
             val pago1Values = ContentValues().apply {
-                put(COLUMN_PAGOS_FECHA_PAGO, "25/05/2024")
+                put(COLUMN_PAGOS_FECHA_PAGO, Utils.formatDateString(LocalDate.now().toString()))
                 put(COLUMN_PAGOS_MODALIDAD, ModalidadDePago.EFECTIVO.descripcion)
                 put(COLUMN_PAGOS_CUOTA_ID, 1) // SOCIO
                 put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, "")
@@ -279,7 +323,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(COLUMN_PAGOS_FECHA_PAGO, Utils.formatDateString(LocalDate.now().toString())) // fecha actual
         values.put(COLUMN_PAGOS_MODALIDAD, modalidadPago)
         values.put(COLUMN_PAGOS_CUOTA_ID, if (esSocio)cuotaID else null)
-        values.put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, if (!esSocio)actividad else null)  //todo: acividad no relacionada al NoSocio
+        values.put(COLUMN_PAGOS_ACTIVIDAD_NOMBRE, if (!esSocio)actividad else null)
         db.insert(TABLE_PAGOS, null, values)
     }
 
@@ -321,7 +365,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     fun getCuotaImpaga(dni: Int): String {
         val db = readableDatabase
-        val cursor = db.rawQuery("SELECT $COLUMN_CUOTA_ID, $COLUMN_CUOTA_PRECIO, $COLUMN_CUOTA_FECHA_VENC FROM $TABLE_CUOTAS WHERE $COLUMN_CUOTA_CLIENTE_DNI = ? AND $COLUMN_CUOTA_ESTADO = 0", arrayOf(dni.toString()))
+        val impago = EstadoDePago.IMPAGO.toString()
+        val cursor = db.rawQuery("SELECT $COLUMN_CUOTA_ID, $COLUMN_CUOTA_PRECIO, $COLUMN_CUOTA_FECHA_VENC FROM $TABLE_CUOTAS WHERE $COLUMN_CUOTA_CLIENTE_DNI = ? AND $COLUMN_CUOTA_ESTADO = ?", arrayOf(dni.toString(), impago))
         val cuotaImpaga = if (cursor.moveToFirst()) {
             "Cuota.: ${cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_ID))} | $${cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_PRECIO))} | ${cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUOTA_FECHA_VENC))}"
         } else {
